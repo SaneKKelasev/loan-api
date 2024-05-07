@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Loan;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class LoansTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,7 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UsersTableSeeder::class);
-        $this->call(LoansTableSeeder::class);
+        Loan::factory()->count(50)->create();
     }
 }
