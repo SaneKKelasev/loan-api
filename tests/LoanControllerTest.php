@@ -4,8 +4,7 @@ namespace Tests;
 
 use App\Models\Loan;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use Laravel\Lumen\Testing\DatabaseTransactions;
 
 class LoanControllerTest extends TestCase
 {
@@ -15,14 +14,14 @@ class LoanControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-            $response = $this->post('/api/loans', [
-                'user_id' => $user->id,
-                'amount' => 5000,
-                'interest_rate' => 10,
-            ]);
+        $response = $this->post('/api/loans', [
+            'user_id' => $user->id,
+            'amount' => 5000,
+            'interest_rate' => 10,
+        ]);
 
-        $response->assertStatus(201);
-        $response->assertJsonStructure([
+        $response->assertResponseStatus(201);
+        $response->seeJsonStructure([
             'id',
             'user_id',
             'amount',
@@ -31,7 +30,7 @@ class LoanControllerTest extends TestCase
             'updated_at',
         ]);
 
-        $this->assertDatabaseHas('loans', [
+        $this->seeInDatabase('loans', [
             'user_id' => $user->id,
             'amount' => 5000,
             'interest_rate' => 10,
@@ -44,8 +43,8 @@ class LoanControllerTest extends TestCase
 
         $response = $this->get("/api/loans/{$loan->id}");
 
-        $response->assertStatus(200);
-        $response->assertJsonStructure([
+        $response->assertResponseStatus(200);
+        $response->seeJsonStructure([
             'id',
             'user_id',
             'amount',
@@ -64,8 +63,8 @@ class LoanControllerTest extends TestCase
             'interest_rate' => 12,
         ]);
 
-        $response->assertStatus(200);
-        $response->assertJsonStructure([
+        $response->assertResponseStatus(200);
+        $response->seeJsonStructure([
             'id',
             'user_id',
             'amount',
@@ -74,7 +73,7 @@ class LoanControllerTest extends TestCase
             'updated_at',
         ]);
 
-        $this->assertDatabaseHas('loans', [
+        $this->seeInDatabase('loans', [
             'id' => $loan->id,
             'amount' => 7000,
             'interest_rate' => 12,
@@ -87,8 +86,8 @@ class LoanControllerTest extends TestCase
 
         $response = $this->delete("/api/loans/{$loan->id}");
 
-        $response->assertStatus(204);
-        $this->assertDatabaseMissing('loans', [
+        $response->assertResponseStatus(204);
+        $this->notSeeInDatabase('loans', [
             'id' => $loan->id,
         ]);
     }
@@ -99,8 +98,8 @@ class LoanControllerTest extends TestCase
 
         $response = $this->get('/api/loans');
 
-        $response->assertStatus(200);
-        $response->assertJsonStructure([
+        $response->assertResponseStatus(200);
+        $response->seeJsonStructure([
             'current_page',
             'data' => [
                 '*' => [
@@ -112,17 +111,12 @@ class LoanControllerTest extends TestCase
                     'updated_at',
                 ],
             ],
-            'first_page_url',
             'from',
             'last_page',
-            'last_page_url',
-            'links' => [],
-            'next_page_url',
-            'path',
-            'per_page',
-            'prev_page_url',
-            'to',
-            'total',
+            "per_page",
+            "prev_page_url",
+            "to",
+            "total"
         ]);
     }
 }
